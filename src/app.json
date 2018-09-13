@@ -19,23 +19,23 @@
     "borderStyle": "white",
     "list": [{
         "pagePath": "pages/index/main",
-        "iconPath": "static/image/job.png",
-        "selectedIconPath": "static/image/job.png"
+        "iconPath": "static/image/jianzhi.png",
+        "selectedIconPath": "static/image/jianzhi_cur.png"
       },
       {
         "pagePath": "pages/driver/main",
-        "iconPath": "static/image/drivers.png",
-        "selectedIconPath": "static/image/drivers.png"
+        "iconPath": "static/image/jiakao.png",
+        "selectedIconPath": "static/image/jiakao_cur.png"
       },
       {
         "pagePath": "pages/lost/main",
-        "iconPath": "static/image/things.png",
-        "selectedIconPath": "static/image/things.png" 
+        "iconPath": "static/image/yanlun.png",
+        "selectedIconPath": "static/image/yanlun_cur.png"
       },
       {
         "pagePath": "pages/user/main",
-        "iconPath": "static/image/me.png",
-        "selectedIconPath": "static/image/me.png"
+        "iconPath": "static/image/person.png",
+        "selectedIconPath": "static/image/person_cur.png"
 
       }
     ]
