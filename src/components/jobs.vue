@@ -94,45 +94,46 @@ export default {
   .jobsContainer {
     background-color: #f2f2f2;
     .job {
-        margin: 0px auto 20px auto;
-        padding: 5px 15px;
-        font-size: 16px;
-        background-color: #fff;
-        box-shadow: 0 5px 25px #eceef0;
-        .job-base {
-            display: flex;
-            justify-content: space-between;
-            .name {
-                font-size: 25px;
-                font-weight: bold;
-            }
-            .price {
-                margin-top: 10px;
-            }
+      margin: 0px auto 20px auto;
+      padding: 10px 15px 15px;
+      font-size: 16px;
+      background-color: #fff;
+      box-shadow: 0 5px 25px #eceef0;
+      .job-base {
+        display: flex;
+        justify-content: space-between;
+        .name {
+          font-size: 25px;
+          font-weight: bold;
         }
-        .job-place {
-            margin: 10px 0 15px 0;
-            display: flex;
-            justify-content: space-between;
+        .price {
+          margin-top: 10px;
         }
-        .job-extra {
-            position: relative;
-            width: 100%;
-            min-height: 40px;
-            .apply {
-                position: absolute;
-                right: 0;
-                top: 0;
-                width: 80px;
-                height: 30px;
-                line-height: 30px;
-                font-size: 16px;
-                background-color: rgb(82, 166, 193);
-            }
+      }
+      .job-place {
+        margin: 10px 0 15px 0;
+        display: flex;
+        justify-content: space-between;
+      }
+      .job-extra {
+        position: relative;
+        width: 100%;
+        min-height: 32px;
+        .apply {
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 80px;
+          height: 30px;
+          line-height: 30px;
+          font-size: 16px;
+          background-color: rgb(82, 166, 193);
         }
-        .introduction {
-                margin-right: 90px;
-            }
+      }
+      .introduction {
+        margin-right: 90px;
+        line-height: 24px;
+      }
     }
   }
 </style>

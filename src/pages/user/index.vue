@@ -8,7 +8,7 @@
         <div class="featureContainer">
           <div class="yieldRatio border">
             <span>收益比例</span>
-            <span class="ratio">100%</span>  
+            <span class="ratio">100%</span>
           </div>
           <div class="myList border" @click="myListShow">
             <span>申请列表</span>
@@ -20,19 +20,19 @@
           <div :class="['jobsList', {'listAnimation': isMyListShow}]">
             <div class="job" v-for="item in myList" :key="item.id">
               <span class="jobsName">{{item.place + '-' + item.name}}</span>
-              <span :class="['jobsStatus', {done: item.isDone, noDone: !item.isDone}]">{{item.isDone ? '已完成' : '没去'}}</span>
-            </div>  
+              <span :class="['jobsStatus', {done: item.isDone, noDone: !item.isDone}]">{{item.isDone ? '已完成' : '未完成'}}</span>
+            </div>
           </div>
           <div class="scanCode border" @click="toScnaCode">
             <span>去扫码</span>
-            <span class="iconfont icon-you"></span> 
+            <span class="iconfont icon-you"></span>
           </div>
           <div class="obtain border">
             <span>获得</span>
             <span>￥20000000000</span>
           </div>
         </div>
-      </div>   
+      </div>
     </div>
 </template>
 <script>
@@ -70,17 +70,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../icons/iconfont.css';
+  @import '../../icons/iconfont.css';
   .userContainer {
     color: #757575;
     .avatarContainer {
       position: relative;
       .avatar {
-      width: 100px;
-      height: 100px;
-      margin: 50px auto 0 auto;
+        width: 100px;
+        height: 100px;
+        margin: 50px auto 0 auto;
       }
-    .avatar_radius {
+      .avatar_radius {
         position: absolute;
         left: 116px;
         top: -22px;
@@ -102,7 +102,7 @@ export default {
         .ratio {
           color: rgba(82, 166, 193, .8);
           font-size: 20px;
-          font-style:italic;
+          //font-style:italic;
         }
       }
       .myList {
@@ -114,27 +114,28 @@ export default {
         height: 0;
         transform: scale(0);
         opacity: 0;
-        background-color: #f0f0f0;
+        background-color: #f9f8f8;
         transition: all .5s ;
       }
+      .noDone{color: #d4d5d5}
     }
-}
-.done {
-  color: rgba(82, 166, 193, .8);
-}
+  }
+  .done {
+    color: rgba(82, 166, 193, .8);
+  }
 
-.noDone {
-  color: red;
-}
+  .noDone {
+    color: red;
+  }
 
-.transform180 {
-   color: rgb(82, 166, 193);
-   transform: rotate(90deg)
-}
+  .transform180 {
+    color: rgb(82, 166, 193);
+    transform: rotate(90deg)
+  }
 
-.listAnimation {
-  height: 100% !important;
-  transform: scale(1) !important;
-  opacity: 1 !important;
-}
+  .listAnimation {
+    height: 100% !important;
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
 </style>
