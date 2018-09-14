@@ -2,13 +2,13 @@
     <div class="column">
         <div class="lost" v-for="item in lostsList" :key="item.id">
             <div class="words">
-                简介：
+                <span>简介：</span>
                 {{item.introduction}}
             </div>
             <div class="imgList">
                 <img :src="url"  v-for="(url, id) in item.imgList" :key="id" @click="preImage({url: url, imgList: item.imgList})">
             </div>
-        </div> 
+        </div>
     </div>
 </template>
 <script>
@@ -36,6 +36,11 @@ export default {
             margin: 0px auto 20px auto;
             background-color: #fff;
             box-shadow: 0 5px 25px #eceef0;
+          .words{
+            padding-top: 10px;
+            line-height: 28px;
+            span{font-size: 18px;color: #666666}
+          }
         }
         .imgList {
             display: flex;

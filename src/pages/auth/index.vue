@@ -32,7 +32,6 @@ import { goTo, login, wxStorage, post, basehost } from '@/utils'
 export default {
   updated () {
     const { errcode, errmsg } = this.loginStatus
-    console.log(errcode, errmsg, 'update')
     if (!errcode && !errmsg) return
     if (errcode === 0 && errmsg === 'success') {
       wx.showToast({
@@ -47,7 +46,7 @@ export default {
       setTimeout(() => {
         goTo({
           url: '/pages/merchant/main',
-          type: 'redirect'
+          type: 'relaunch'
         })
       }, 1500)
     } else if (errcode === 1 && errmsg === 'fail') {
@@ -95,11 +94,11 @@ export default {
               nickName: data.nickName,
               avatar: data.avatarUrl
             }
-          }, 'set'))
-          goTo({
+          }, 'set').then(data => goTo({
             url: 'page/index/main',
             type: 'navBack'
           })
+          ))
         }
       })
     },

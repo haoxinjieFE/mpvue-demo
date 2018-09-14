@@ -1,8 +1,7 @@
 import { FETCH_LOST } from '../mutation-types'
 import { get, basehost } from '@/utils'
 const state = {
-  losts: [],
-  isLoading: false
+  losts: []
 }
 
 const actions = {
