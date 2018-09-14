@@ -86,7 +86,7 @@ export default {
     background-color: #f2f2f2;
     .job {
         margin: 0px auto 20px auto;
-        padding: 10px 15px 15px 0;
+        padding: 10px 15px 15px;
         font-size: 16px;
         background-color: #fff;
         box-shadow: 0 5px 25px #eceef0;
