@@ -6,19 +6,19 @@
           <open-data  type="userAvatarUrl"></open-data>
         </div>
         <div class="featureContainer">
-          <div class="myList border" @click="myListShow">
+          <div class="releaseList" @click="releaseListShow">
             <span>发布列表</span>
             <span :class="{
             'iconfont': true,
             'icon-you': true,
-            'transform180': applyArrow === 'drop' }"></span>
+            'transform180': releaseArrow === 'drop' }"></span>
           </div>
-          <div :class="['jobsList', {'listAnimation': isMyListShow}]">
+          <div :class="['jobsList', {'listAnimation': isReleaseListShow}]">
             <div class="job" v-for="item in myList" :key="item.id">
-              <span class="jobsName">{{item.place + '-' + item.name}}</span>
+              <span class="jobsName">{{'2018-08-10'+ '-' + item.name}}</span>
               <div class="codeBtn">
-                  <span>签到</span>
-                  <span>签退</span>
+                  <button :plain="true" @click="signIn">签到</button>
+                  <button :plain="true" @click="signIn">签退</button>
               </div>
             </div>  
           </div>
@@ -28,35 +28,36 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import { openScanCode } from '@/utils'
-import navbar from '@/components/navbar'
+import { openScanCode, previewImage } from '@/utils'
 export default {
   data () {
     return {
-      applyArrow: 'rise',
-      isMyListShow: false
+      releaseArrow: 'rise',
+      isReleaseListShow: false
     }
   },
   computed: {
-    ...mapState({
-      myList: state => state.jobs.jobs.slice(0, 10)
+    ...mapState('jobs', {
+      myList: state => state.jobs.slice(0, 10)
     })
   },
   methods: {
     toScnaCode: function () {
       openScanCode().then(data => console.log(data)).catch(err => console.log(err))
     },
-    myListShow: function () {
-      this.isMyListShow = !this.isMyListShow
-      if (this.applyArrow === 'rise') {
-        this.applyArrow = 'drop'
-      } else if (this.applyArrow === 'drop') {
-        this.applyArrow = 'rise'
+    releaseListShow: function () {
+      this.isReleaseListShow = !this.isReleaseListShow
+      if (this.releaseArrow === 'rise') {
+        this.releaseArrow = 'drop'
+      } else if (this.releaseArrow === 'drop') {
+        this.releaseArrow = 'rise'
       }
+    },
+    signIn: function () {
+      previewImage({
+        current: 'https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K/r/www/cache/static/protocol/https/home/img/qrcode/zbios_efde696.png'
+      })
     }
-  },
-  components: {
-    navbar
   }
 }
 </script>
@@ -83,7 +84,7 @@ export default {
     }
     .featureContainer {
       margin: 50px auto 0 auto;
-      div:not(.jobsList) {
+      div:not(.jobsList):not(.codeBtn) {
         display: flex;
         font-size: 16px;
         justify-content: space-between;
@@ -96,7 +97,7 @@ export default {
           font-style:italic;
         }
       }
-      .myList {
+      .releaseList {
         span {
           transition: all .5s;
         }
@@ -105,11 +106,25 @@ export default {
         height: 0;
         transform: scale(0);
         opacity: 0;
-        background-color: #f0f0f0;
         transition: all .5s ;
+        background-color: #f2f2f2;
         .job {
+            margin-bottom: 10px;
+            padding: 10px 15px 15px 0;
+            font-size: 16px;
+            background-color: #fff;
+            box-shadow: 0 5px 25px #eceef0;
             .jobsName {
-             
+              color: rgba(0, 0, 0, 0.3)
+            }
+            .codeBtn {
+              display: flex;
+              button {
+                padding: 0 5px;
+                color:  rgba(82, 166, 193, .8);
+                font-size: 15px;
+                border: none;
+              }
             }
         }
       }

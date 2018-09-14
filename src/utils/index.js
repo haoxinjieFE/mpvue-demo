@@ -44,7 +44,7 @@ const get = ({url, data, loading}) => new Promise((resolve, reject) => {
   })
 })
 
-const post = ({url, data}) => new Promise((resolve, reject) => {
+const post = (url, data) => new Promise((resolve, reject) => {
   wx.request({
     url: url,
     data: data,
@@ -74,15 +74,28 @@ const chooseImage = (count, complete, isSave) => new Promise((resolve, reject) =
   })
 })
 
-const previewImage = ({current, imgList, complete}) => new Promise((resolve, reject) => {
+const previewImage = ({current, imgList = [], complete = () => {}}) => new Promise((resolve, reject) => {
   wx.previewImage({
     current: current,
-    urls: imgList,
+    urls: !imgList.length ? [...imgList, current] : imgList,
     complete: complete,
     success: res => resolve(res),
     fail: error => reject(error)
   })
 })
+
+const checkLogin = () => {
+  wxStorage({
+    key: 'merchant'
+  }, 'get').then(() => goTo({
+    url: '/pages/merchant/main',
+    type: 'relaunch'
+  })).catch(() => wxStorage({
+    key: 'user'
+  }, 'get').then(() => {}).catch(e => goTo({
+    url: '/pages/auth/main'
+  })))
+}
 
 /**
  * @param url 跳转的地址
@@ -171,6 +184,34 @@ const openScanCode = (complete) => new Promise((resolve, reject) => {
   })
 })
 
+const authorize = ({scope, complete = () => {}}) => new Promise((resolve, reject) => {
+  wx.authorize({
+    scope: `scope.${scope}`,
+    success: data => resolve(data),
+    fail: err => reject(err),
+    complete: complete
+  })
+})
+// 打开内置导航方法
+const navigateRoad = ({scale = 18, chooseComplete = () => {}, openComplete = () => {}}) => new Promise((resolve, reject) => {
+  wx.chooseLocation({
+    success: data => {
+      wx.openLocation({
+        latitude: data.latitude,
+        longitude: data.longitude,
+        name: data.name,
+        scale: scale,
+        address: data.address,
+        success: data => resolve(data),
+        fail: err => reject(err),
+        complete: openComplete
+      })
+    },
+    fail: err => reject(err),
+    complete: chooseComplete
+  })
+})
+
 export {
   formatNumber,
   formatTime,
@@ -182,5 +223,8 @@ export {
   login,
   wxStorage,
   basehost,
-  openScanCode
+  openScanCode,
+  checkLogin,
+  authorize,
+  navigateRoad
 }

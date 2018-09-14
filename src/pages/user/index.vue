@@ -6,11 +6,11 @@
           <open-data  type="userAvatarUrl"></open-data>
         </div>
         <div class="featureContainer">
-          <div class="yieldRatio border">
+          <div class="yieldRatio">
             <span>收益比例</span>
             <span class="ratio">100%</span>  
           </div>
-          <div class="myList border" @click="myListShow">
+          <div class="myList" @click="myListShow">
             <span>申请列表</span>
             <span :class="{
             'iconfont': true,
@@ -23,7 +23,15 @@
               <span :class="['jobsStatus', {done: item.isDone, noDone: !item.isDone}]">{{item.isDone ? '已完成' : '没去'}}</span>
             </div>  
           </div>
-          <div class="scanCode border" @click="toScnaCode">
+          <div class="todayList" @click="todayListShow">
+            <span>今日工作</span>
+            <span :class="{
+            'iconfont': true,
+            'icon-you': true,
+            'transform180': todayArrow === 'drop' }"></span>
+          </div>
+          <div :class="['todayList', {'listAnimation': isTodayListShow}]"></div>
+          <div class="scanCode" @click="toScnaCode">
             <span>去扫码</span>
             <span class="iconfont icon-you"></span> 
           </div>
@@ -43,6 +51,8 @@ export default {
   data () {
     return {
       applyArrow: 'rise',
+      todayArrow: 'rise',
+      isTodayListShow: false,
       isMyListShow: false
     }
   },
@@ -61,6 +71,14 @@ export default {
         this.applyArrow = 'drop'
       } else if (this.applyArrow === 'drop') {
         this.applyArrow = 'rise'
+      }
+    },
+    todayListShow: function () {
+      this.isTodayListShow = !this.isTodayListShow
+      if (this.todayArrow === 'rise') {
+        this.todayArrow = 'drop'
+      } else if (this.todayArrow === 'drop') {
+        this.todayArrow = 'rise'
       }
     }
   },
@@ -102,7 +120,7 @@ export default {
         .ratio {
           color: rgba(82, 166, 193, .8);
           font-size: 20px;
-          font-style:italic;
+          // font-style:italic;
         }
       }
       .myList {
@@ -116,6 +134,11 @@ export default {
         opacity: 0;
         background-color: #f0f0f0;
         transition: all .5s ;
+      }
+      .todayList {
+        span {
+          transition: all .5s;
+        }
       }
     }
 }

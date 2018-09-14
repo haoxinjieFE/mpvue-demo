@@ -7,7 +7,7 @@ myLoading<template>
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import { goTo, wxStorage } from '@/utils'
+import { checkLogin } from '@/utils'
 import { FETCH_JOBS, APPLY_JOBS, FILTER_TIME, FILTER_PERSON, FILTER_PRICE } from '@/stores/mutation-types'
 import sliders from '@/components/sliders'
 import navbar from '@/components/navbar'
@@ -18,19 +18,7 @@ export default {
     this.getJobs(true)
   },
   mounted () {
-    wxStorage({
-      key: 'merchant'
-    }, 'get').then(data => wxStorage({
-      key: 'user'
-    }, 'get').then(res => {
-      if (res.errMsg === 'getStorage:ok' && !res.data.openId) {
-        goTo({
-          url: '/pages/auth/main'
-        })
-      }
-    }).catch(e => goTo({
-      url: '/pages/auth/main'
-    })))
+    checkLogin()
   },
 
   data () {
@@ -56,8 +44,7 @@ export default {
   },
   computed: {
     ...mapState('jobs', {
-      jobs: state => state.jobs,
-      loading: state => state.isLoading
+      jobs: state => state.jobs
     })
   },
   methods: {
