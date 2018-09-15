@@ -1,13 +1,23 @@
 <template>
     <div class="driverContainer">
       <sliders :data="sliders"/>
-      <drivermodal />
+      <drivermodal v-if="isShowDriverModal" :showDriverModal="showDriverModal"/>
+      <driverList :drivers="drivers" :showDriverModal="showDriverModal"/>
+      <scrollmsg/>
     </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex'
+import { FETCH_DRIVER } from '@/stores/mutation-types'
 import sliders from '@/components/sliders'
 import drivermodal from '@/components/drivermodal'
+import driverList from '@/components/driverList'
+import scrollmsg from '@/components/scrollmsg'
 export default {
+  created () {
+    this.getDrivers()
+    console.log(this)
+  },
   data () {
     return {
       sliders: [
@@ -26,12 +36,35 @@ export default {
           url: 'wwww.google.com',
           img: 'http://img95.699pic.com/photo/50055/5642.jpg_wh300.jpg'
         }
-      ]
+      ],
+      isShowDriverModal: false
+    }
+  },
+  computed: {
+    ...mapState('driver', {
+      drivers: state => state.drivers
+    })
+  },
+  methods: {
+    ...mapActions('driver', {
+      getDrivers: FETCH_DRIVER
+    }),
+    showDriverModal: function (e) {
+      if (e.type !== 'submit') {
+        this.isShowDriverModal = !this.isShowDriverModal
+      }
+    }
+  },
+  sockets: {
+    connect () {
+      console.log('connect!')
     }
   },
   components: {
     sliders,
-    drivermodal
+    drivermodal,
+    driverList,
+    scrollmsg
   }
 }
 </script>

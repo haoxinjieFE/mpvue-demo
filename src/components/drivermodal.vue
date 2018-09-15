@@ -1,21 +1,21 @@
 <template>
-  <div class="container">
-    <div class="driverModal">
-      <form action="">
+  <div id="mask" class="container" @click.stop="showDriverModal">
+    <div class="driverModal" id="modal" @click.stop="() => {}">
+      <form @submit="onSubmit">
         <div class="usernameContainer">
           <div class="name_tit">姓名：</div>
-          <div class="username"><input type="text" placeholder="请填写您的姓名"></div>
+          <div class="username"><input name="username" type="text" placeholder="请填写您的姓名"></div>
         </div>
         <div class="adressContainer">
           <div class="name_tit">地址：</div>
-          <input type="text" placeholder="请填写您的位置">
+          <input name="address" type="text" placeholder="请填写您的位置">
         </div>
         <div class="adressContainer">
           <div class="name_tit">联系方式：</div>
-          <input type="text" placeholder="请填写您的联系方式">
+          <input name="contact" type="text" placeholder="请填写您的联系方式">
         </div>
         <div class="form-btn">
-          <button class="singUp btn" type="primary">报名</button>
+          <button class="singUp btn" formType="submit" type="primary">报名</button>
           <button class="reset btn" type="primary">重置</button>
         </div>
       </form>
@@ -23,6 +23,19 @@
   </div>
 </template>
 <script>
+export default {
+  props: {
+    showDriverModal: {
+      type: Function,
+      default: () => {}
+    }
+  },
+  methods: {
+    onSubmit: function (e) {
+      console.log(e)
+    }
+  }
+}
 </script>
 <style lang="scss" scoped>
   $height:30px;
@@ -42,6 +55,7 @@
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, .3);
+    z-index: 999;
     .driverModal {
       width: 70%;
       background-color: #fff;
