@@ -37,5 +37,5 @@
 ```
 
 ## example
-![image](https://github.com/haoxinjieFE/mpvue-demo/raw/master/demonstration/demo1.gif)
+![image](https://github.com/haoxinjieFE/mpvue-demo/raw/master/demonstration/demo1.gif)  
 ![image](https://github.com/haoxinjieFE/mpvue-demo/raw/master/demonstration/demo2.gif)
