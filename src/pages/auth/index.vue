@@ -15,7 +15,7 @@
     </div>
     <div :class="['merchantLogin', {metchantAnimation: isShowMerchant}]">
         <form @submit="onSubmit" >
-          <div class="account"><span>账号:</span><input name="account" type="text" placeholder="请输入您的姓名"></div>  
+          <div class="account"><span>账号:</span><input name="phone" type="text" placeholder="请输入您的姓名"></div>  
           <div class="password"><span>密码:</span><input name="password" type="text" placeholder="请输入您的密码"></div>
           <div class="btn-area">
             <button type="primary" class="cancel" @click="handleMerchantLogin">取消</button>
@@ -27,42 +27,9 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
-import { CHECK_LOGIN } from '@/stores/mutation-types'
-import { goTo, login, wxStorage, post, basehost } from '@/utils'
+import { FETCH_USER, MERCHANT_LOGIN } from '@/stores/mutation-types'
+import { login } from '@/utils'
 export default {
-  updated () {
-    const { errcode, errmsg } = this.loginStatus
-    if (!errcode && !errmsg) return
-    if (errcode === 0 && errmsg === 'success') {
-      wx.showToast({
-        title: '登录成功!',
-        icon: 'success',
-        mask: true
-      })
-      wxStorage({
-        key: 'merchant',
-        data: true
-      }, 'set')
-      setTimeout(() => {
-        goTo({
-          url: '/pages/merchant/main',
-          type: 'relaunch'
-        })
-      }, 1500)
-    } else if (errcode === 1 && errmsg === 'fail') {
-      wx.showToast({
-        title: '登录失败！请重新输入',
-        icon: 'none',
-        mask: true
-      })
-    } else {
-      wx.showToast({
-        title: '未知错误！！！',
-        icon: 'none',
-        mask: true
-      })
-    }
-  },
   data () {
     return {
       isShowMerchant: false
@@ -75,39 +42,30 @@ export default {
   },
   methods: {
     ...mapActions('auth', {
-      getLoginStatus: CHECK_LOGIN
+      getUser: FETCH_USER,
+      merchantLogin: MERCHANT_LOGIN
     }),
     bindGetUserInfo: function (e) {
-      login({
-        timeout: 1000
-      }).then(data => {
+      console.log(e)
+      login().then(data => {
+        console.log(data)
         if (data.errMsg === 'login:ok' && e.target.errMsg === 'getUserInfo:ok') {
           const params = {
             code: data.code,
-            encryptedData: e.target.encryptedData,
-            iv: e.target.iv
+            nickName: e.target.userInfo.nickName,
+            avatarUrl: e.target.userInfo.avatarUrl,
+            gender: e.target.userInfo.gender + ''
           }
-          post(`${basehost}/api/user`, {...params}).then(data => wxStorage({
-            key: 'user',
-            data: {
-              openId: data.openId,
-              nickName: data.nickName,
-              avatar: data.avatarUrl
-            }
-          }, 'set').then(data => goTo({
-            url: 'page/index/main',
-            type: 'navBack'
-          })
-          ))
+          this.getUser(params)
         }
-      })
+      }).catch(err => console.log(err))
     },
     handleMerchantLogin: function () {
       this.isShowMerchant = !this.isShowMerchant
     },
     onSubmit: function (e) {
       const { mp: {detail: {value}} } = e
-      this.getLoginStatus(value)
+      this.merchantLogin(value)
     }
   }
 }

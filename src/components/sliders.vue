@@ -1,14 +1,17 @@
 <template>
   <swiper :autoplay="true" :indicator-dots="true" :interval="3000" :circular="true">
     <swiper-item v-for="item in data" :key="item.id">
-      <a class="itemContainer" :href="item.url">
-        <img :src="item.img" alt=""/>
+      <a class="itemContainer">
+        <img :src="item.url" alt=""/>
       </a>
     </swiper-item>
   </swiper>
 </template>
 <script>
 export default {
+  created () {
+    console.log(this)
+  },
   props: {
     data: {
       type: Array,

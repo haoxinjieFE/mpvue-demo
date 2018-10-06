@@ -7,7 +7,7 @@ const decrypt = require('./decrypt')
 
 // 这个可能要根据自己的 appid 和 appsecret 改
 const appid = 'wx309baa77e8b7ed4b'
-const secret = '6179573d7783f3f9f0f2a3ed633ea7a5'
+const secret = 'c414dbcc299aa5d5fc49a998a0033efd'
 const app = express()
 const port = 3001
 app.use(bodyParser.json())

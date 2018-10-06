@@ -1,4 +1,4 @@
-const basehost = 'http://localhost:3001'
+const basehost = 'https://58zmdjob.com:8070'
 
 function formatNumber (n) {
   const str = n.toString()
@@ -6,21 +6,92 @@ function formatNumber (n) {
 }
 
 function formatTime (date) {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
+  console.log(date)
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = d.getMonth() + 1
+  const day = d.getDate()
 
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  const second = date.getSeconds()
+  const hour = d.getHours()
+  const minute = d.getMinutes()
+  const second = d.getSeconds()
 
-  const t1 = [year, month, day].map(formatNumber).join('/')
+  const t1 = [year, month, day].map(formatNumber).join('-')
   const t2 = [hour, minute, second].map(formatNumber).join(':')
-
   return `${t1} ${t2}`
 }
 
-const get = ({url, data, loading}) => new Promise((resolve, reject) => {
+const get = ({url, data, loading, isJson}) => new Promise((resolve, reject) => {
+  const header = isJson ? {
+    'Content-Type': 'application/json'
+  } : {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+  const sessionId = wx.getStorageSync('hkhadmin_sessionId')
+  if (sessionId != null && sessionId !== '') {
+    header.Cookie = 'hkhadmin_sessionId=' + sessionId
+  }
+  const clear = () => wx.hideLoading()
+  if (loading) {
+    wx.showLoading({
+      title: '数据加载中...',
+      mask: true
+    })
+  }
+  wx.request({
+    url: url,
+    data: data,
+    method: 'GET',
+    header: header,
+    success: res => {
+      clear()
+      resolve(res.data)
+      const html = res.data
+      if (typeof html === 'string' && html.substring(0, 15) === '<!DOCTYPE html>') {
+        // 重新登录
+        wx.showModal({
+          title: '提示',
+          content: '登录状态失效，请重新登录！',
+          showCancel: false,
+          success: function (res) {
+            wx.clearStorageSync()
+            goTo({
+              url: '/pages/auth/main',
+              type: 'relaunch'
+            })
+          }
+        })
+      }
+      const sessionId = wx.getStorageSync('hkhadmin_sessionId')
+      if (sessionId === '' || sessionId == null || sessionId) {
+        var cookie = res.header['Set-Cookie']
+        if (cookie != null) {
+          var cookies = cookie.split(';')
+          var sessionid = cookies[0].split('=')[1]
+          if (sessionid !== 'deleteMe') { // 登陆出错的情况下会返回值为"deleteMe"的session_id
+            wx.setStorageSync('hkhadmin_sessionId', sessionid)
+          }
+        }
+      }
+    },
+    fail: error => {
+      clear()
+      reject(error)
+    }
+  })
+})
+
+const post = ({url, data, loading, isJson}) => new Promise((resolve, reject) => {
+  const header = isJson ? {
+    'Content-Type': 'application/json'
+  } : {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+  const sessionId = wx.getStorageSync('hkhadmin_sessionId')
+  if (sessionId !== null && sessionId !== '') {
+    header.Cookie = 'hkhadmin_sessionId=' + sessionId
+  }
+
   const clear = () => wx.hideLoading()
   if (loading) {
     wx.showLoading({
@@ -32,24 +103,40 @@ const get = ({url, data, loading}) => new Promise((resolve, reject) => {
   wx.request({
     url: url,
     data: data,
-    method: 'GET',
+    header: header,
+    method: 'POST',
     success: res => {
       clear()
       resolve(res.data)
+      const html = res.data
+      if (typeof html === 'string' && html.substring(0, 15) === '<!DOCTYPE html>') {
+        // 重新登录
+        console.log('重新登录')
+        wx.showModal({
+          title: '提示',
+          content: '登录状态失效，请重新登录！',
+          showCancel: false,
+          success: function (res) {
+            wx.clearStorageSync()
+            goTo({
+              url: '/pages/index/main',
+              type: 'relaunch'
+            })
+          }
+        })
+      }
+      const sessionId = wx.getStorageSync('hkhadmin_sessionId')
+      if (sessionId === '' || sessionId == null || sessionId) {
+        var cookie = res.header['Set-Cookie']
+        if (cookie != null) {
+          var cookies = cookie.split(';')
+          var sessionid = cookies[0].split('=')[1]
+          if (sessionid !== 'deleteMe') { // 登陆出错的情况下会返回值为"deleteMe"的session_id
+            wx.setStorageSync('hkhadmin_sessionId', sessionid)
+          }
+        }
+      }
     },
-    fail: error => {
-      clear()
-      reject(error)
-    }
-  })
-})
-
-const post = (url, data) => new Promise((resolve, reject) => {
-  wx.request({
-    url: url,
-    data: data,
-    method: 'POST',
-    success: res => resolve(res.data),
     fail: error => reject(error)
   })
 })
@@ -86,15 +173,20 @@ const previewImage = ({current, imgList = [], complete = () => {}}) => new Promi
 
 const checkLogin = () => {
   wxStorage({
-    key: 'merchant'
-  }, 'get').then(() => goTo({
-    url: '/pages/merchant/main',
-    type: 'relaunch'
-  })).catch(() => wxStorage({
-    key: 'user'
-  }, 'get').then(() => {}).catch(e => goTo({
-    url: '/pages/auth/main'
-  })))
+    key: 'USER_TYPE'
+  }, 'get').then(data => {
+    console.log(data)
+    if (data.data === 1) {
+      goTo({url: '/pages/index/main'})
+    } else if (data.data === 2) {
+      goTo({
+        url: '/pages/merchant/main',
+        type: 'relaunch'
+      })
+    } else {
+      goTo({url: '/pages/auth/main'})
+    }
+  })
 }
 
 /**
@@ -103,6 +195,7 @@ const checkLogin = () => {
  * 具体用法见：https://developers.weixin.qq.com/miniprogram/dev/api/ui-navigate.html
  */
 const goTo = ({url, type = 'nav'}) => new Promise((resolve, reject) => {
+  console.log('goto')
   switch (type) {
     case 'nav':
       wx.navigateTo({
@@ -146,8 +239,7 @@ const goTo = ({url, type = 'nav'}) => new Promise((resolve, reject) => {
 
 const login = (timeout) => new Promise((resolve, reject) => {
   wx.login({
-    timeout: timeout,
-    success: errMsg => resolve(errMsg),
+    success: data => resolve(data),
     fail: err => reject(err)
   })
 })
@@ -157,7 +249,6 @@ const login = (timeout) => new Promise((resolve, reject) => {
  * @param method set/get 调用 setStorage/getStorage String
  */
 const wxStorage = ({key, data}, method) => new Promise((resolve, reject) => {
-  console.log(key, data)
   if (method === 'get') {
     wx.getStorage({
       key: key,
@@ -212,6 +303,16 @@ const navigateRoad = ({scale = 18, chooseComplete = () => {}, openComplete = () 
   })
 })
 
+const signMsg = {
+  200: '成功',
+  101: '身份不符合，未参加本次兼职',
+  102: '已经签到',
+  103: '已经签退',
+  104: '已经结束',
+  105: '已经结束'
+
+}
+
 export {
   formatNumber,
   formatTime,
@@ -226,5 +327,6 @@ export {
   openScanCode,
   checkLogin,
   authorize,
-  navigateRoad
+  navigateRoad,
+  signMsg
 }

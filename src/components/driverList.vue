@@ -1,13 +1,16 @@
 <template>
     <div class="driverList">
-        <div class="driver" v-for="item in drivers" :key="item.id">
+        <div class="driver" v-for="item in drivers.list" :key="item.id">
             <div class="topContainer">
-                <img class="logoImg" :src="item.url" alt="">
-                <div>{{item.place}}</div>
+                <img class="logoImg" :src="item.logo" alt="">
+                <div><span class="iconfont icon-didian"></span>{{item.addr}}</div>
+            </div>
+            <div class="middleContainer">
+                <div><span class="iconfont icon-renshu"></span>{{item.peoperNum}}</div>
             </div>
             <div class="bottomContainer">
-                <div class="introduction">{{item.introduction}}</div>
-                <button class="applyBtn" @click.stop="showDriverModal">报名</button>
+                <div class="introduction"><span class="iconfont icon-miaoshu"></span>{{item.depict}}</div>
+                <button class="applyBtn" @click.stop="showDriverModal(item.id)">报名</button>
             </div>
         </div>
     </div>
@@ -27,11 +30,16 @@ export default {
     showDriverModal: {
       type: Function,
       default: () => {}
+    },
+    getDriverId: {
+      type: Function,
+      default: () => {}
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+    @import '../icons/iconfont.css';
     .driverList {
         .driver {
             margin-bottom: 20px;
@@ -44,10 +52,16 @@ export default {
                 justify-content: space-between;
                 align-items: center;
                 .logoImg {
-                    width: 100px;
-                    height: 80px;
+                    width: 180px;
+                    height: 90px;
                 }
             }
+            .middleContainer {
+                display: flex;
+                justify-content:flex-end;
+                align-items: center;
+            }
+
             .bottomContainer {
                 display: flex;
                 align-items: center;
@@ -55,7 +69,10 @@ export default {
                 margin: 20px 0 10px 0;
                 position: relative;
                 .introduction {
+                    width: 200px;
                     margin-right: 90px;
+                    display:block;
+                    word-break: break-all;word-wrap: break-word;
                 }
                 .applyBtn {
                     position: absolute;
@@ -67,6 +84,9 @@ export default {
                     font-size: 16px;
                     background-color: rgb(95, 192, 224);    
                 }
+            }
+            .iconfont {
+                padding-right: 10px;
             }
         }
     }

@@ -7,9 +7,9 @@
 		"minified": true,
 		"newFeature": true
 	},
-	"miniprogramRoot": "./dist/",
+	"miniprogramRoot": "dist/",
 	"compileType": "miniprogram",
-	"appid": "wxe36a85992f961ca4",
+	"appid": "wx309baa77e8b7ed4b",
 	"projectname": "mpvue-demo",
 	"condition": {
 		"search": {

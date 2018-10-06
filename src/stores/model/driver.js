@@ -1,5 +1,6 @@
-import { FETCH_DRIVER } from '../mutation-types'
-import { get, basehost } from '@/utils'
+import { FETCH_DRIVER, ENROLL } from '../mutation-types'
+import { get, post, basehost } from '@/utils'
+
 const state = {
   drivers: []
 }
@@ -7,11 +8,20 @@ const state = {
 const actions = {
   [FETCH_DRIVER] ({state, commit}) {
     get({
-      url: `${basehost}/api/driver`,
+      url: `${basehost}/app/driving/getDriving`,
       loading: true
     }).then((res) => {
-      console.log(res.data)
       commit(FETCH_DRIVER, {data: res.data})
+    })
+  },
+  [ENROLL] ({state, commit}, params) {
+    return new Promise((resolve, reject) => {
+      post({
+        url: `${basehost}/app/userDriving/enrollDriving`,
+        data: params
+      }).then(data => {
+        resolve(data)
+      })
     })
   }
 }

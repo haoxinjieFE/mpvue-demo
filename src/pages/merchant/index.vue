@@ -14,11 +14,11 @@
             'transform180': releaseArrow === 'drop' }"></span>
           </div>
           <div :class="['jobsList', {'listAnimation': isReleaseListShow}]">
-            <div class="job" v-for="item in myList" :key="item.id">
-              <span class="jobsName">{{'2018-08-10'+ '-' + item.name}}</span>
+            <div class="job" v-for="item in merchantJobs.list" :key="item.id">
+              <span class="jobsName">{{item.createTime+ '-' + item.title}}</span>
               <div class="codeBtn">
-                  <button :plain="true" @click="signIn">签到</button>
-                  <button :plain="true" @click="signIn">签退</button>
+                  <button :plain="true" @click="signIn(item.id)">签到</button>
+                  <button :plain="true" @click="signOut(item.id)">签退</button>
               </div>
             </div>  
           </div>
@@ -27,9 +27,13 @@
     </div>
 </template>
 <script>
-import { mapState } from 'vuex'
-import { openScanCode, previewImage } from '@/utils'
+import { mapState, mapActions } from 'vuex'
+import { FETCH_MERCHANT_JOBS, FETCH_MORE, MAKESIGNINCODE, MAKESIGNOUTCODE } from '@/stores/mutation-types'
+import { openScanCode } from '@/utils'
 export default {
+  onShow () {
+    this.getMerchantJobs()
+  },
   data () {
     return {
       releaseArrow: 'rise',
@@ -37,11 +41,17 @@ export default {
     }
   },
   computed: {
-    ...mapState('jobs', {
-      myList: state => state.jobs.slice(0, 10)
+    ...mapState('merchant', {
+      merchantJobs: state => state.merchantJobs
     })
   },
   methods: {
+    ...mapActions('merchant', {
+      getMerchantJobs: FETCH_MERCHANT_JOBS,
+      getMore: FETCH_MORE,
+      getSignInCode: MAKESIGNINCODE,
+      getSignOutCode: MAKESIGNOUTCODE
+    }),
     toScnaCode: function () {
       openScanCode().then(data => console.log(data)).catch(err => console.log(err))
     },
@@ -53,11 +63,21 @@ export default {
         this.releaseArrow = 'rise'
       }
     },
-    signIn: function () {
-      previewImage({
-        current: 'https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K/r/www/cache/static/protocol/https/home/img/qrcode/zbios_efde696.png'
-      })
+    signIn: function (id) {
+      this.getSignInCode({jobId: id})
+    },
+    signOut: function (id) {
+      this.getSignOutCode({jobId: id})
     }
+  },
+  async onPullDownRefresh () {
+    console.log('pullDowns')
+    this.getMerchantJobs()
+    if (!this.loading) wx.stopPullDownRefresh()
+  },
+  onReachBottom () {
+    console.log('loadmore')
+    this.getMore()
   }
 }
 </script>
@@ -115,7 +135,11 @@ export default {
             background-color: #fff;
             box-shadow: 0 5px 25px #eceef0;
             .jobsName {
-              color: rgba(0, 0, 0, 0.3)
+              max-width: 260px;
+              color: rgba(0, 0, 0, 0.3);
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
             .codeBtn {
               display: flex;

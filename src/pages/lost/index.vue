@@ -1,7 +1,7 @@
 <template>
     <div class="lostContainer">
         <div class="rules">
-          mpvue 真香！
+          言论
         </div>
         <lostList :lostsList="losts" />
     </div>
@@ -11,7 +11,7 @@ import { mapState, mapActions } from 'vuex'
 import { FETCH_LOST } from '@/stores/mutation-types'
 import lostList from '@/components/lostList'
 export default {
-  created () {
+  onShow () {
     this.getLosts()
     console.log(this, 'lost')
   },

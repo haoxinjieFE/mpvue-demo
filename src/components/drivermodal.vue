@@ -4,19 +4,20 @@
       <form @submit="onSubmit">
         <div class="usernameContainer">
           <div class="name_tit">姓名：</div>
-          <div class="username"><input name="username" type="text" placeholder="请填写您的姓名"></div>
+          <div class="username"><input :class="[{'error': errormsg === '不能为空'}]" name="name" type="text" placeholder="请填写您的姓名"></div>
         </div>
         <div class="adressContainer">
           <div class="name_tit">地址：</div>
-          <input name="address" type="text" placeholder="请填写您的位置">
+          <input :class="[{'error': errormsg === '不能为空'}]" name="addr" type="text" placeholder="请填写您的位置">
         </div>
         <div class="adressContainer">
           <div class="name_tit">联系方式：</div>
-          <input name="contact" type="text" placeholder="请填写您的联系方式">
+          <input  :class="[{'error': errormsg === '请输入正确的手机号' || errormsg === '不能为空' }]" name="phone" type="text" placeholder="请填写您的联系方式">
+          <span class="rules">{{errormsg}}</span>  
         </div>
         <div class="form-btn">
           <button class="singUp btn" formType="submit" type="primary">报名</button>
-          <button class="reset btn" type="primary">重置</button>
+          <button class="reset btn" formType="reset"  type="primary">重置</button>
         </div>
       </form>
     </div>
@@ -24,15 +25,51 @@
 </template>
 <script>
 export default {
+  data () {
+    return {
+      errormsg: ''
+    }
+  },
   props: {
     showDriverModal: {
       type: Function,
       default: () => {}
+    },
+    getDrivers: {
+      type: Function,
+      default: () => {}
+    },
+    enroll: {
+      type: Function,
+      default: () => {}
+    },
+    id: {
+      type: String,
+      default: ''
     }
   },
   methods: {
     onSubmit: function (e) {
-      console.log(e)
+      if (!(e.target.value.name && e.target.value.addr && e.target.value.phone)) {
+        this.errormsg = '不能为空'
+      } else if (!/^[1][3,4,5,7,8][0-9]{9}$/.test(e.target.value.phone)) {
+        this.errormsg = '请输入正确的手机号'
+      } else {
+        this.enroll({...e.target.value, drivingId: this.id}).then(data => {
+          this.showDriverModal()
+          if (data.status === 200) {
+            wx.showToast({
+              title: '报名成功'
+            })
+          } else {
+            wx.showToast({
+              icon: 'none',
+              title: '报名失败'
+            })
+          }
+          this.getDrivers()
+        })
+      }
     }
   }
 }
@@ -76,6 +113,12 @@ export default {
       .form-btn{
         .singUp{ float: left; }
         .reset{float: right;}
+      }
+      .error {
+        border: 1px solid rgb(	255, 69, 0);
+      }
+      .rules {
+        color: rgb(	255, 69, 0)
       }
     }
   }
