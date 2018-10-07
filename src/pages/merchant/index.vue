@@ -14,11 +14,17 @@
             'transform180': releaseArrow === 'drop' }"></span>
           </div>
           <div :class="['jobsList', {'listAnimation': isReleaseListShow}]">
-            <div class="job" v-for="item in merchantJobs.list" :key="item.id">
-              <span class="jobsName">{{item.createTime+ '-' + item.title}}</span>
-              <div class="codeBtn">
-                  <button :plain="true" @click="signIn(item.id)">签到</button>
-                  <button :plain="true" @click="signOut(item.id)">签退</button>
+              <div class="job" v-for="item in merchantJobs.list" :key="item.id">
+              <div class="topContainer">
+                <span class="jobsName">{{item.serverTime + ' ' + item.time+ '-' + item.title}}</span>
+                <div class="codeBtn">
+                    <button :plain="true" @click="signIn(item.id)">签到</button>
+                    <button :plain="true" @click="signOut(item.id)">签退</button>
+                </div>
+              </div>
+              <div class="signInNum">
+                <span>已签到: {{item.signInCount}}</span>
+                <span>已签退: {{item.signOutCount}}</span>
               </div>
             </div>  
           </div>
@@ -29,10 +35,9 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { FETCH_MERCHANT_JOBS, FETCH_MORE, MAKESIGNINCODE, MAKESIGNOUTCODE } from '@/stores/mutation-types'
-import { openScanCode } from '@/utils'
 export default {
   onShow () {
-    this.getMerchantJobs()
+    this.getMerchantJobs({reLoad: true})
   },
   data () {
     return {
@@ -52,9 +57,6 @@ export default {
       getSignInCode: MAKESIGNINCODE,
       getSignOutCode: MAKESIGNOUTCODE
     }),
-    toScnaCode: function () {
-      openScanCode().then(data => console.log(data)).catch(err => console.log(err))
-    },
     releaseListShow: function () {
       this.isReleaseListShow = !this.isReleaseListShow
       if (this.releaseArrow === 'rise') {
@@ -71,12 +73,10 @@ export default {
     }
   },
   async onPullDownRefresh () {
-    console.log('pullDowns')
-    this.getMerchantJobs()
+    this.getMerchantJobs({reLoad: true})
     if (!this.loading) wx.stopPullDownRefresh()
   },
   onReachBottom () {
-    console.log('loadmore')
     this.getMore()
   }
 }
@@ -103,13 +103,9 @@ export default {
       }
     }
     .featureContainer {
+      font-size: 16px;
       margin: 50px auto 0 auto;
       div:not(.jobsList):not(.codeBtn) {
-        display: flex;
-        font-size: 16px;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: .5px solid #f2f2f2;
         padding: 10px 20px;
         .ratio {
           color: rgba(82, 166, 193, .8);
@@ -118,9 +114,17 @@ export default {
         }
       }
       .releaseList {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         span {
           transition: all .5s;
         }
+      }
+      .topContainer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
       .jobsList {
         height: 0;
@@ -131,23 +135,28 @@ export default {
         .job {
             margin-bottom: 10px;
             padding: 10px 15px 15px 0;
-            font-size: 16px;
             background-color: #fff;
             box-shadow: 0 5px 25px #eceef0;
             .jobsName {
-              max-width: 260px;
+              max-width: 200px;
               color: rgba(0, 0, 0, 0.3);
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
             }
             .codeBtn {
-              display: flex;
               button {
+                float: left;
                 padding: 0 5px;
                 color:  rgba(82, 166, 193, .8);
                 font-size: 15px;
                 border: none;
+              }
+            }
+            .signInNum {
+              color: rgba(0, 0, 0, 0.3);
+              span {
+                padding-right: 20px;
               }
             }
         }

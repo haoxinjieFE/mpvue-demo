@@ -18,6 +18,7 @@ function formatTime (date) {
 
   const t1 = [year, month, day].map(formatNumber).join('-')
   const t2 = [hour, minute, second].map(formatNumber).join(':')
+  console.log(`${t1} ${t2}`)
   return `${t1} ${t2}`
 }
 

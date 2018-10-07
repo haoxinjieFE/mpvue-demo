@@ -19,7 +19,7 @@
           </div>
           <div :class="['jobsList', {'listAnimation': isMyListShow}]">
             <div class="job" v-for="item in myJobs.list" :key="item.id">
-              <span class="jobsName">{{item.createTime + '-' + item.jobName}}</span>
+              <span class="jobsName">{{item.serverTime + ' ' + item.time + '-' + item.jobName}}</span>
               <span class="jobsStatus">{{jobStatus[item.status]}}</span>
             </div>
           </div>
@@ -32,7 +32,7 @@
           </div>
            <div :class="['jobsList', {'listAnimation': isTodayListShow}]">
             <div class="job" v-for="item in myTodayJobs.list" :key="item.id">
-              <span class="jobsName">{{item.jobName + '-' + '￥' + item.money + '/天'}}</span>
+              <span class="jobsName">{{item.serverTime + ' ' + item.time + '-' +item.jobName}}</span>
               <span @click="navRoad" class="jobsStatus">去这里</span>
             </div>
           </div>
@@ -44,6 +44,18 @@
             <span>获得</span>
             <span>￥{{userInfo.income}}</span>
           </div>
+          <div class="concatWe border" @click="concatWe">
+            <span>联系我们</span>
+             <span :class="{
+            'iconfont': true,
+            'icon-you': true,
+            'transform180': concatWeArrow === 'drop' }"></span>
+          </div>
+          <div :class="['concatWeList', {'listAnimation': isShowConcatWe}]">
+            <span>运营 wx: xxxxxxxxxxxx</span>
+            <span>开发 wx: xxxxxxxxxxxx</span>
+            <span>开发 wx: 176009078984</span>
+          </div>
         </div>
       </div>
     </div>
@@ -52,21 +64,18 @@
 import { mapState, mapActions } from 'vuex'
 import { openScanCode, wxStorage, navigateRoad } from '@/utils'
 import { FETCH_MY_JOBS, FETCH_MORE, JOB_SIGN_STATUS, FETCH_TODAY_JOBS } from '@/stores/mutation-types'
-import navbar from '@/components/navbar'
 export default {
   onShow () {
     wxStorage({key: 'USERINFO'}, 'get').then(data => { this.userInfo = data.data })
-    console.log(this)
-  },
-  destroyed () {
-    console.log('destroyed')
   },
   data () {
     return {
       applyArrow: 'rise',
       todayArrow: 'rise',
+      concatWeArrow: 'rise',
       isTodayListShow: false,
       isMyListShow: false,
+      isShowConcatWe: false,
       userInfo: {},
       jobStatus: {
         1: '已申请',
@@ -93,10 +102,11 @@ export default {
     toScnaCode: function () {
       openScanCode().then(data => {
         const params = {
-          jobId: data.result.split('&')[0].split('=')[1]
+          jobId: data.result.split('&')[0].split('=')[1],
+          type: data.result.split('&')[1].split('=')[1]
         }
         this.jobSign(params)
-      }).catch(err => console.log(err))
+      })
     },
     toNavigateRoad: function () {
       navigateRoad()
@@ -119,12 +129,17 @@ export default {
       }
       this.getTodayJobs()
     },
+    concatWe: function () {
+      this.isShowConcatWe = !this.isShowConcatWe
+      if (this.concatWeArrow === 'rise') {
+        this.concatWeArrow = 'drop'
+      } else if (this.concatWeArrow === 'drop') {
+        this.concatWeArrow = 'rise'
+      }
+    },
     navRoad: function () {
       navigateRoad({})
     }
-  },
-  components: {
-    navbar
   }
 }
 </script>
@@ -185,6 +200,18 @@ export default {
          span {
             transition: all .5s;
          }
+      }
+      .concatWe {
+        span {
+          transition: all .5s;
+        }
+      }
+      .concatWeList {
+        height: 0;
+        transform: scale(0);
+        opacity: 0;
+        background-color: #f9f8f8;
+        transition: all .5s ;
       }
       .noDone{color: #d4d5d5}
     }

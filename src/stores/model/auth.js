@@ -7,8 +7,8 @@ const state = {
 const actions = {
   [FETCH_USER] ({state, commit}, params) {
     post({url: `${basehost}/app/login/appWxLogin`, data: params}).then(data => {
-      console.log(data)
       commit(FETCH_USER, data.data)
+      wxStorage({key: 'USER_STATUS', data: data.status}, 'set')
       wxStorage({key: 'USER_TYPE', data: data.data.type}, 'set')
       wxStorage({key: 'USERINFO', data: data.data}, 'set')
       goTo({
@@ -20,7 +20,6 @@ const actions = {
   [MERCHANT_LOGIN] ({state, commit}, params) {
     post({url: `${basehost}/app/login/appLogin`, data: params}).then(
       data => {
-        console.log(data)
         commit(MERCHANT_LOGIN, data.data)
         wxStorage({key: 'USER_TYPE', data: data.data.type}, 'set')
         goTo({

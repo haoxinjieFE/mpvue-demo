@@ -7,7 +7,7 @@
       <open-data  type="userNickName"></open-data>
     </div>
     <!-- 需要使用 button 来授权登录 -->
-    <button class="getUserInfo" open-type="getUserInfo" @getuserinfo="bindGetUserInfo">授权登录</button>
+    <button :disabled="isShowGetUser" class="getUserInfo" open-type="getUserInfo" @getuserinfo="bindGetUserInfo">授权登录</button>
     <div class="tips">请升级微信版本</div>
     <div class="merchant" @click="handleMerchantLogin">
         <div>商家入口</div>
@@ -26,13 +26,55 @@
   </div>
 </template>
 <script>
+import QQMapWX from '../../../static/qqmap-wx-jssdk.min.js'
 import { mapState, mapActions } from 'vuex'
 import { FETCH_USER, MERCHANT_LOGIN } from '@/stores/mutation-types'
-import { login } from '@/utils'
+import { login, goTo } from '@/utils'
 export default {
+  mounted () {
+    const qqmapsdk = new QQMapWX({
+      key: 'ZDPBZ-GFSA2-F4QUK-CEKFQ-BDIV7-34B7Q'
+    })
+
+    login().then(data => {
+      wx.getLocation({
+        success: res => {
+          const latitude = res.latitude
+          const longitude = res.longitude
+          qqmapsdk.reverseGeocoder({
+            location: {
+              latitude: latitude,
+              longitude: longitude
+            },
+            success: address => {
+              const city = '驻马店'
+              if (city !== '驻马店') {
+                wx.showModal({
+                  title: '提示',
+                  content: '抱歉，小优还没到达该城市!',
+                  showCancel: false,
+                  success: function (res) {
+                    if (res.confirm) {
+                      goTo({
+                        url: '/pages/none/main',
+                        type: 'relaunch'
+                      })
+                    }
+                  }
+                })
+              } else {
+                this.isShowGetUser = false
+              }
+            }
+          })
+        }
+      })
+    })
+  },
   data () {
     return {
-      isShowMerchant: false
+      isShowMerchant: false,
+      isShowGetUser: true
     }
   },
   computed: {
@@ -46,9 +88,7 @@ export default {
       merchantLogin: MERCHANT_LOGIN
     }),
     bindGetUserInfo: function (e) {
-      console.log(e)
       login().then(data => {
-        console.log(data)
         if (data.errMsg === 'login:ok' && e.target.errMsg === 'getUserInfo:ok') {
           const params = {
             code: data.code,
@@ -58,7 +98,7 @@ export default {
           }
           this.getUser(params)
         }
-      }).catch(err => console.log(err))
+      })
     },
     handleMerchantLogin: function () {
       this.isShowMerchant = !this.isShowMerchant

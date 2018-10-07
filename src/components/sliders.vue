@@ -9,9 +9,6 @@
 </template>
 <script>
 export default {
-  created () {
-    console.log(this)
-  },
   props: {
     data: {
       type: Array,

@@ -17,9 +17,6 @@
 </template>
 <script>
 export default {
-  created () {
-    console.log(this)
-  },
   data () {
   },
   props: {

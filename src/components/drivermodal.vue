@@ -55,11 +55,17 @@ export default {
       } else if (!/^[1][3,4,5,7,8][0-9]{9}$/.test(e.target.value.phone)) {
         this.errormsg = '请输入正确的手机号'
       } else {
+        this.errormsg = ''
         this.enroll({...e.target.value, drivingId: this.id}).then(data => {
           this.showDriverModal()
           if (data.status === 200) {
             wx.showToast({
-              title: '报名成功'
+              title: '报名成功',
+              success: data => {
+                setTimeout(() => {
+                  this.getDrivers()
+                }, 1500)
+              }
             })
           } else {
             wx.showToast({
@@ -67,7 +73,6 @@ export default {
               title: '报名失败'
             })
           }
-          this.getDrivers()
         })
       }
     }

@@ -11,8 +11,8 @@
             <span><span class="iconfont icon-renshu"></span><span class="apply_num">{{item.enlistNum}}</span>/{{item.peopleNum}}</span>
         </div>
         <div class="job-extra">
-            <div class="job_time"><span class="iconfont icon-shijian"></span>{{item.createTime}}</div>
-            <button  type="primary" @click="handleApplyJobs(item.id)" class="apply">{{!item.recordStatus ? '申请' : '已申请'}}</button>
+            <div class="job_time"><span class="iconfont icon-shijian"></span>{{item.serverTime + ' ' + item.time}}</div>
+            <button :disabled="!item.lastPeople && item.peopleNum === item.enlistNum"  type="primary" @click="handleApplyJobs(item.id)" class="apply">{{item.peopleNum === item.enlistNum ? '人数已满' : !item.recordStatus ? '申请' : '已申请'}}</button>
         </div>
         <div class="introduction">
             <span class="iconfont icon-miaoshu"></span>
@@ -25,9 +25,6 @@
 import { formatTime } from '@/utils'
 import filter from '@/components/filter'
 export default {
-  created () {
-    console.log(this.jobs, 'jobs')
-  },
   props: {
     jobs: {
       type: Array,
@@ -44,7 +41,6 @@ export default {
   },
   methods: {
     handleApplyJobs: function (id) {
-      console.log(id)
       this.applyJobs({jobId: id})
     },
     formatDate: (date) => formatTime(date)
@@ -91,7 +87,7 @@ export default {
           position: absolute;
           right: 0;
           top: 0;
-          width: 80px;
+          width: 100px;
           height: 30px;
           line-height: 30px;
           font-size: 16px;

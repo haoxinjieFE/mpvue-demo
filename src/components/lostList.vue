@@ -2,7 +2,7 @@
     <div class="column">
         <div class="lost" v-for="item in lostsList.list" :key="item.id">
             <div class="words">
-                <span>简介：</span>
+                <span class="iconfont icon-miaoshu"></span>
                 {{item.depict}}
             </div>
             <imgList :images = item.images />
@@ -13,28 +13,16 @@
     </div>
 </template>
 <script>
-import { previewImage } from '@/utils'
 import imgList from './imgList'
 export default {
-  created () {
-    console.log(this)
-  },
   props: ['lostsList'],
-  methods: {
-    preImage: function ({url, imgList}) {
-      console.log(this)
-      previewImage({
-        current: url,
-        imgList: imgList
-      })
-    }
-  },
   components: {
     imgList
   }
 }
 </script>
 <style lang="scss" scoped>
+@import '../icons/iconfont.css';
   .column {
     margin-top: 10px;
     font-size: 16px;
@@ -57,6 +45,9 @@ export default {
         font-size: 14px;
         color: #757575;
       }
+    }
+    .iconfont {
+      padding-right: 10px;
     }
   }
 </style>

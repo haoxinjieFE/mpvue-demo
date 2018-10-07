@@ -8,12 +8,11 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
-import { FETCH_LOST } from '@/stores/mutation-types'
+import { FETCH_LOST, FETCH_MORE } from '@/stores/mutation-types'
 import lostList from '@/components/lostList'
 export default {
   onShow () {
-    this.getLosts()
-    console.log(this, 'lost')
+    this.getLosts({reLoad: true})
   },
   computed: {
     ...mapState('losts', {
@@ -22,11 +21,19 @@ export default {
   },
   methods: {
     ...mapActions('losts', {
-      getLosts: FETCH_LOST
+      getLosts: FETCH_LOST,
+      getMore: FETCH_MORE
     })
   },
   components: {
     lostList
+  },
+  async onPullDownRefresh () {
+    this.getLosts({reLoad: true})
+    if (!this.loading) wx.stopPullDownRefresh()
+  },
+  onReachBottom () {
+    this.getMore()
   }
 }
 </script>

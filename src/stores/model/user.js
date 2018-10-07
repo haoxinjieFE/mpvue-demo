@@ -37,43 +37,62 @@ const actions = {
     })
   },
   [JOB_SIGN_STATUS] ({state, commit}, params) {
-    console.log(params)
-    post({
-      url: `${basehost}/app/jobrecord/signIn`,
-      data: params
-    }).then(data => {
-      if (data.status === 200) {
-        wx.showModal({
-          title: '签到成功！',
-          showCancel: false,
-          success: function (res) {
-          }
-        })
-      } else {
-        wx.showModal({
-          title: '签到失败！',
-          content: signMsg[data.status],
-          showCancel: false,
-          success: function (res) {
-          }
-        })
-      }
-    })
+    if (params.type === '0') {
+      post({
+        url: `${basehost}/app/jobrecord/signIn`,
+        data: {jobId: params.jobId}
+      }).then(data => {
+        if (data.status === 200) {
+          wx.showModal({
+            title: '签到成功！',
+            showCancel: false,
+            success: function (res) {
+            }
+          })
+        } else {
+          wx.showModal({
+            title: '签到失败！',
+            content: signMsg[data.status],
+            showCancel: false,
+            success: function (res) {
+            }
+          })
+        }
+      })
+    } else if (params.type === '1') {
+      post({
+        url: `${basehost}/app/jobrecord/signOut`,
+        data: {jobId: params.jobId}
+      }).then(data => {
+        if (data.status === 200) {
+          wx.showModal({
+            title: '签退成功！',
+            showCancel: false,
+            success: function (res) {
+            }
+          })
+        } else {
+          wx.showModal({
+            title: '签退失败！',
+            content: signMsg[data.status],
+            showCancel: false,
+            success: function (res) {
+            }
+          })
+        }
+      })
+    }
   }
 }
 
 const mutations = {
   [FETCH_MY_JOBS] (state, payload) {
-    payload.data.list.forEach(item => { item.createTime = formatTime(item.createTime) })
+    payload.data.list.forEach(item => { item.serverTime = formatTime(item.serverTime).split(' ')[0] })
     state.myJobs = !state.myJobs.list ? {...payload.data} : {...payload.data, list: [...state.myJobs.list, ...payload.data.list]}
   },
   [FETCH_TODAY_JOBS] (state, payload) {
-    payload.data.list.forEach(item => { item.createTime = formatTime(item.createTime) })
+    payload.data.list.forEach(item => { item.serverTime = formatTime(item.serverTime).split(' ')[0] })
     state.myTodayJobs = {...payload.data}
-  },
-  [JOB_SIGN_STATUS] (state, payload) {
-    payload.data.list.forEach(item => { item.createTime = formatTime(item.createTime) })
-    state.myJobs = !state.myJobs.list ? {...payload.data} : {...payload.data, list: [...state.myJobs.list, ...payload.data.list]}
   }
 }
 

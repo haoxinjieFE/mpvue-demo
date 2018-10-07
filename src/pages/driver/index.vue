@@ -7,14 +7,13 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
-import { FETCH_DRIVER, ENROLL } from '@/stores/mutation-types'
+import { FETCH_DRIVER, ENROLL, FETCH_MORE } from '@/stores/mutation-types'
 import sliders from '@/components/sliders'
 import drivermodal from '@/components/drivermodal'
 import driverList from '@/components/driverList'
-import scrollmsg from '@/components/scrollmsg'
 export default {
   onShow () {
-    this.getDrivers()
+    this.getDrivers({reLoad: true})
   },
   data () {
     return {
@@ -33,7 +32,8 @@ export default {
   methods: {
     ...mapActions('driver', {
       getDrivers: FETCH_DRIVER,
-      enroll: ENROLL
+      enroll: ENROLL,
+      getMore: FETCH_MORE
     }),
     showDriverModal: function (id) {
       if (id) {
@@ -42,19 +42,17 @@ export default {
       this.isShowDriverModal = !this.isShowDriverModal
     }
   },
-  sockets: {
-    connect () {
-      console.log('connect!')
-    }
-  },
   components: {
     sliders,
     drivermodal,
-    driverList,
-    scrollmsg
+    driverList
+  },
+  async onPullDownRefresh () {
+    this.getDrivers({reLoad: true})
+    if (!this.loading) wx.stopPullDownRefresh()
+  },
+  onReachBottom () {
+    this.getMore()
   }
 }
 </script>
-<style lang="scss" scoped>
-
-</style>
